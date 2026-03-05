@@ -1,0 +1,113 @@
+
+
+.home-wrapper {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #1c1f2b, #0f1117);
+  font-family: "Cormorant Garamond", serif;
+  color: #f5f0e6;
+  overflow-x: hidden;
+}
+
+
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 60px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.logo {
+  font-family: "Cinzel", serif;
+  letter-spacing: 2px;
+  color: #d4af37;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-icon {
+  font-size: 20px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.profile-icon:hover {
+  transform: scale(1.2);
+  color: #d4af37;
+}
+
+.logout-btn {
+  padding: 8px 18px;
+  border-radius: 25px;
+  border: 1px solid #b85c5c;
+  background: transparent;
+  color: #b85c5c;
+  cursor: pointer;
+  transition: 0.4s ease;
+}
+
+.logout-btn:hover {
+  background: #b85c5c;
+  color: #1c1f2b;
+  box-shadow: 0 0 15px rgba(184, 92, 92, 0.4);
+}
+
+
+
+.hero {
+  text-align: center;
+  padding: 80px 20px 50px;
+}
+
+.hero h1 {
+  font-family: "Cinzel", serif;
+  font-size: 36px;
+  color: #d4af37;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 18px;
+  color: #e8e3d8;
+  font-style: italic;
+}
+
+
+
+.content-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 40px 80px;
+}
+
+.info-card {
+  background: rgba(245, 240, 230, 0.08);
+  padding: 30px;
+  border-radius: 18px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+  transition: 0.5s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 50px rgba(212, 175, 55, 0.2);
+}
+
+.info-card h3 {
+  font-family: "Cinzel", serif;
+  color: #d4af37;
+  margin-bottom: 10px;
+}
+
+.info-card p {
+  color: #e8e3d8;
+}
