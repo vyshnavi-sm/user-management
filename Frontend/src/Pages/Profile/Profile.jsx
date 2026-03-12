@@ -15,6 +15,7 @@ function Profile() {
   const [editMode, setEditMode] = useState(false);
   const [name, setName] = useState("");
   const [image, setImage] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null); // preview state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -24,7 +25,7 @@ function Profile() {
 
     if (!token && !storedToken) {
       dispatch(logout());
-      navigate("/"); 
+      navigate("/");
       return;
     }
 
@@ -44,9 +45,19 @@ function Profile() {
     fetchUser();
   }, [token, dispatch, navigate]);
 
+  // Handle image selection + preview
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+      setPreviewImage(URL.createObjectURL(file)); // live preview
+    }
+  };
+
   // Update profile
   const handleUpdate = async (e) => {
     e.preventDefault();
+
     try {
       await axiosInstance.put("/users/me", { name, email: user.email });
 
@@ -63,6 +74,7 @@ function Profile() {
       setUser(updated.data);
       setEditMode(false);
       setImage(null);
+      setPreviewImage(null);
     } catch (err) {
       console.log("Update error:", err.response?.data || err.message);
       alert("Failed to update profile.");
@@ -75,23 +87,42 @@ function Profile() {
     navigate("/");
   };
 
-  if (loading) return <h2 style={{ textAlign: "center", marginTop: "20px" }}>Loading...</h2>;
-  if (error) return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h3>{error}</h3>
-      <button onClick={() => { dispatch(logout()); navigate("/"); }}>Go to Login</button>
-    </div>
-  );
+  if (loading)
+    return (
+      <h2 style={{ textAlign: "center", marginTop: "20px" }}>Loading...</h2>
+    );
+
+  if (error)
+    return (
+      <div style={{ textAlign: "center", marginTop: "50px" }}>
+        <h3>{error}</h3>
+        <button
+          onClick={() => {
+            dispatch(logout());
+            navigate("/");
+          }}
+        >
+          Go to Login
+        </button>
+      </div>
+    );
+
   if (!user) return null;
 
   return (
     <div className="profile-wrapper">
       <nav className="navbar">
-        <h2 className="logo" onClick={() => navigate("/home")} style={{ cursor: "pointer" }}>
+        <h2
+          className="logo"
+          onClick={() => navigate("/home")}
+          style={{ cursor: "pointer" }}
+        >
           RoyalSpace
         </h2>
         <div className="nav-right">
-          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+          <button className="logout-btn" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
       </nav>
 
@@ -99,15 +130,21 @@ function Profile() {
         <div className="profile-card">
           <div className="avatar-section">
             <div className="avatar">
-              {user.profileImage ? (
-                <img 
-                  src={`http://localhost:9000/uploads/${user.profileImage}`} 
-                  alt="Profile" 
+              {previewImage ? (
+                <img src={previewImage} alt="Preview" className="profile-img" />
+              ) : user.profileImage ? (
+                <img
+                  src={`http://localhost:9000/uploads/${user.profileImage}`}
+                  alt="Profile"
                   className="profile-img"
                 />
-              ) : "👑"}
+              ) : (
+                "👑"
+              )}
             </div>
-            <br></br>
+
+            <br />
+
             <h2>{user.name}</h2>
             <p>{user.role?.toUpperCase()}</p>
           </div>
@@ -117,14 +154,39 @@ function Profile() {
             <p>Joined: {new Date(user.createdAt).toDateString()}</p>
           </div>
 
-          {!editMode && <button onClick={() => setEditMode(true)}>Edit Profile</button>}
+          {!editMode && (
+            <button onClick={() => setEditMode(true)}>Edit Profile</button>
+          )}
 
           {editMode && (
             <form onSubmit={handleUpdate}>
-              <input type="text" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Name" />
-              <input type="file" accept="image/*" onChange={(e) => setImage(e.target.files[0])} />
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                placeholder="Name"
+              />
+
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+
               <button type="submit">Save</button>
-              <button type="button" onClick={() => { setEditMode(false); setImage(null); }} style={{ marginLeft: "10px", backgroundColor: "#ccc" }}>Cancel</button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEditMode(false);
+                  setImage(null);
+                  setPreviewImage(null);
+                }}
+                style={{ marginLeft: "10px", backgroundColor: "#ccc" }}
+              >
+                Cancel
+              </button>
             </form>
           )}
         </div>

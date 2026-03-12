@@ -21,7 +21,10 @@ function App() {
 
       <Route path="/admin/login" element={<AdminLogin />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+
     </Routes>
+
   );
 }
 

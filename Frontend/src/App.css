@@ -1,8 +1,15 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+/* #root {
+  width: 100%;
+  max-width: 100% !important;
+  padding: 0 !important;
+  text-align: unset !important;
+  margin: 0 !important;
+}
+
+body {
+  display: block !important;
+  place-items: unset !important;
+  min-height: 100vh;
 }
 
 .logo {
@@ -39,4 +46,4 @@
 
 .read-the-docs {
   color: #888;
-}
+} */

@@ -5,7 +5,8 @@ import adminReducer from "../features/admin/adminSlice"
 const store = configureStore({
     reducer:{
         auth:authReducer,
-        admin:adminReducer
+        admin:adminReducer,
+      
     }
 })
 

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import axiosInstance from "../../../api/axiosInstance";
-import { logout } from "../../../features/auth/authSlice"; // adjust path if needed
+import { logout } from "../../../features/auth/authSlice";
 import "./AdminDashboard.css";
 
 function AdminDashboard() {
@@ -15,18 +15,20 @@ function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [editingUser, setEditingUser] = useState(null);
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     role: "",
   });
 
-  // ================= FETCH USERS =================
   const fetchUsers = async () => {
     try {
-      setLoading(true);
       const res = await axiosInstance.get("/users");
+
       setUsers(res.data);
+
+      localStorage.setItem("users_cache", JSON.stringify(res.data));
     } catch (err) {
       console.error(err.response?.data || err.message);
     } finally {
@@ -35,24 +37,33 @@ function AdminDashboard() {
   };
 
   useEffect(() => {
+    const cachedUsers = localStorage.getItem("users_cache");
+
+    if (cachedUsers) {
+      setUsers(JSON.parse(cachedUsers));
+      setLoading(false);
+    }
+
     fetchUsers();
   }, []);
 
-  // ================= LOGOUT =================
   const handleLogout = () => {
     dispatch(logout());
     localStorage.removeItem("token");
     navigate("/admin/login");
   };
 
-  // ================= DELETE USER =================
   const deleteUser = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?"))
-      return;
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
 
     try {
       await axiosInstance.delete(`/users/${id}`);
-      fetchUsers();
+
+      // optimistic update
+      const updatedUsers = users.filter((user) => user._id !== id);
+      setUsers(updatedUsers);
+      localStorage.setItem("users_cache", JSON.stringify(updatedUsers));
+
     } catch (err) {
       alert(err.response?.data?.message || "Delete failed");
     }
@@ -61,6 +72,7 @@ function AdminDashboard() {
   // ================= EDIT USER =================
   const startEdit = (user) => {
     setEditingUser(user._id);
+
     setFormData({
       name: user.name,
       email: user.email,
@@ -70,15 +82,27 @@ function AdminDashboard() {
 
   const cancelEdit = () => {
     setEditingUser(null);
-    setFormData({ name: "", email: "", role: "" });
+    setFormData({
+      name: "",
+      email: "",
+      role: "",
+    });
   };
 
   const saveEdit = async (e) => {
     e.preventDefault();
+
     try {
       await axiosInstance.put(`/users/${editingUser}`, formData);
+
+      const updatedUsers = users.map((user) =>
+        user._id === editingUser ? { ...user, ...formData } : user
+      );
+
+      setUsers(updatedUsers);
+      localStorage.setItem("users_cache", JSON.stringify(updatedUsers));
+
       cancelEdit();
-      fetchUsers();
     } catch (err) {
       alert(err.response?.data?.message || "Update failed");
     }
@@ -92,11 +116,9 @@ function AdminDashboard() {
       (u.role && u.role.toLowerCase().includes(search.toLowerCase()))
   );
 
-  // ================= LOADING =================
-  if (loading) return <h2 className="loading-text">Loading users...</h2>;
-
   return (
     <div className="admin-wrapper">
+
       {/* ================= HEADER ================= */}
       <header className="admin-header">
         <h1>Admin Dashboard</h1>
@@ -127,28 +149,46 @@ function AdminDashboard() {
         </thead>
 
         <tbody>
-          {filteredUsers.map((user) => (
-            <tr key={user._id}>
-              <td>{user.name}</td>
-              <td>{user.email}</td>
-              <td>{user.role}</td>
-              <td>
-                <button
-                  className="edit-btn"
-                  onClick={() => startEdit(user)}
-                >
-                  Edit
-                </button>
-
-                <button
-                  className="delete-btn"
-                  onClick={() => deleteUser(user._id)}
-                >
-                  Delete
-                </button>
+          {loading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <tr key={index}>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+                <td>Loading...</td>
+              </tr>
+            ))
+          ) : filteredUsers.length === 0 ? (
+            <tr>
+              <td colSpan="4" className="loading-text">
+                No users found
               </td>
             </tr>
-          ))}
+          ) : (
+            filteredUsers.map((user) => (
+              <tr key={user._id}>
+                <td>{user.name}</td>
+                <td>{user.email}</td>
+                <td>{user.role}</td>
+
+                <td>
+                  <button
+                    className="edit-btn"
+                    onClick={() => startEdit(user)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="delete-btn"
+                    onClick={() => deleteUser(user._id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 
