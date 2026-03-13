@@ -18,6 +18,7 @@ function Profile() {
   const [previewImage, setPreviewImage] = useState(null); // preview state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  // const [deleteImage,setDeleteImage] = useState(null)
 
   // Fetch logged-in user
   useEffect(() => {
@@ -80,6 +81,13 @@ function Profile() {
       alert("Failed to update profile.");
     }
   };
+
+  // const handleDelete = async(e)=>{
+  //   e.preventDefault()
+
+  //   const image = user.image.filter((user)=>user.id!==image.id)
+  //   setDeleteImage(image)
+  // }
 
   const handleLogout = () => {
     dispatch(logout());
@@ -187,6 +195,8 @@ function Profile() {
               >
                 Cancel
               </button>
+              {/* {deleteImage}
+              <button onClick={()=>handleDelete(setDeleteImage)}>Delete</button> */}
             </form>
           )}
         </div>

@@ -111,6 +111,20 @@ exports.updateMyProfile = async (req, res) => {
   }
 };
 
+// exports.deleteMyProfile = async(req,res)=>{
+
+//   const {email,password,profileImage}=req.body
+
+//   const user = await User.findByIdAndDelete(
+  
+//   const  image = user.image.filter((user)=>user.id !==profileImage.id)
+
+//     res.json(image)
+
+
+//   )
+// }
+
 
 
 
