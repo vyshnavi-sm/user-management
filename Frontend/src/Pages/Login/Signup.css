@@ -1,6 +1,3 @@
-/* ============================= */
-/* GOOGLE FONTS */
-/* ============================= */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:wght@400;500&display=swap');
 
 * {
@@ -8,10 +5,6 @@
   padding: 0;
   box-sizing: border-box;
 }
-
-/* ============================= */
-/* WRAPPER (Same as Login) */
-/* ============================= */
 
 .register-wrapper {
   height: 100vh;
@@ -23,10 +16,6 @@
   overflow: hidden;
   position: relative;
 }
-
-/* ============================= */
-/* CARD - Opening Effect */
-/* ============================= */
 
 .register-card {
   width: 400px;
@@ -43,10 +32,6 @@
   box-shadow: 0 35px 70px rgba(0, 0, 0, 0.6);
 }
 
-/* ============================= */
-/* TITLE */
-/* ============================= */
-
 .register-title {
   font-family: "Cinzel", serif;
   font-size: 28px;
@@ -62,10 +47,6 @@
   letter-spacing: 1px;
   font-style: italic;
 }
-
-/* ============================= */
-/* FORM */
-/* ============================= */
 
 .input-group {
   position: relative;
@@ -90,6 +71,7 @@
   box-shadow: 0 5px 15px rgba(56, 189, 248, 0.35);
 }
 
+/* 🔥 FIXED FLOATING LABEL */
 .input-group label {
   position: absolute;
   top: 12px;
@@ -97,13 +79,18 @@
   color: #0f172a;
   font-size: 15px;
   pointer-events: none;
+  transition: 0.3s ease;
+  background: #f9fafb;
+  padding: 0 5px;
 }
 
-/* keep label static for simpler UI */
-
-/* ============================= */
-/* BUTTON */
-/* ============================= */
+/* 🔥 Move label when input is focused or filled */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 12px;
+  color: #0ea5e9;
+}
 
 button {
   width: 100%;
@@ -125,19 +112,12 @@ button:hover {
   box-shadow: 0 0 20px rgba(14, 165, 233, 0.5);
 }
 
-/* ============================= */
-/* ERRORS */
-/* ============================= */
-
-.error {
+.error-text {
   font-size: 13px;
   color: #b85c5c;
   margin-top: 6px;
+  display: block;
 }
-
-/* ============================= */
-/* BOTTOM TEXT */
-/* ============================= */
 
 .bottom-text {
   margin-top: 25px;

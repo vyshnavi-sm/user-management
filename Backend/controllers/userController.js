@@ -111,50 +111,46 @@ exports.updateMyProfile = async (req, res) => {
   }
 };
 
-// exports.deleteMyProfile = async(req,res)=>{
-
-//   const {email,password,profileImage}=req.body
-
-//   const user = await User.findByIdAndDelete(
-  
-//   const  image = user.image.filter((user)=>user.id !==profileImage.id)
-
-//     res.json(image)
-
-
-//   )
-// }
-
-
 
 
 exports.updateProfileImage = async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ message: "No image uploaded" });
+    if (!req.file) {
+      return res.status(400).json({ message: "No image uploaded" });
+    }
 
-    const inputPath = req.file.path;
+    const userData = await User.findById(req.user.id);
+
+    if (userData.profileImage) {
+      const oldPath = path.join("uploads", userData.profileImage);
+
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    const inputPath = req.file.path; 
     const outputFilename = `resized-${req.file.filename}`;
     const outputPath = path.join("uploads", outputFilename);
 
-    // Resize to 150x150 for smaller profile picture
     await sharp(inputPath)
-      .resize(150, 150) // smaller
+      .resize(150, 150)
       .toFile(outputPath);
 
-    // Delete original
-    fs.unlinkSync(inputPath);
+    if (fs.existsSync(inputPath)) {
+      fs.unlinkSync(inputPath);
+    }
 
-    // Update DB
-    const user = await User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       { profileImage: outputFilename },
       { new: true }
     ).select("-password");
 
-    res.json(user);
+    res.json(updatedUser);
 
   } catch (error) {
-    console.error("Profile image update error:", error);
+    console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
